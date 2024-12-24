@@ -41,6 +41,20 @@ public class PartnerRepository : IPartner
         }
     }
 
+    public async Task<IEnumerable<PartnerResponse>> GetPartnersForPolicy(string policyNumber)
+    {
+        try
+        {
+            IEnumerable<PartnerResponse> partners = await GetPartnerWithPolicies();
+            List<PartnerResponse> filteredPartners = partners.Where(partner => partner.Policies != null && partner.Policies.Any(policy => policy.PolicyNumber == policyNumber)).ToList();
+            return filteredPartners;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
     public async Task<IEnumerable<PartnerResponse>> GetPartnerWithPolicies()
     {
         try

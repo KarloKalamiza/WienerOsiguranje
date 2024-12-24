@@ -41,4 +41,13 @@ public class PartnerController : ControllerBase
             return NotFound();
         return Ok(partner);
     }
+
+    [HttpGet("PartnersFilteredByPolicyNumber/{policyNumber}")]
+    public async Task<ActionResult<IEnumerable<PartnerResponse>>> GetPartnersFilteredByPartnerNumber(string policyNumber)
+    {
+        IEnumerable<PartnerResponse> partners = await _unitOfWork.Partners.GetPartnersForPolicy(policyNumber);
+        if (partners is null)
+            return NotFound();
+        return Ok(partners);
+    }
 }

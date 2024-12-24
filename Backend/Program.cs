@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
 
 builder.Services.AddScoped<IPartner, PartnerRepository>();
+builder.Services.AddScoped<IPolicy, PolicyRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();

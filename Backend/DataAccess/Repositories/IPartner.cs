@@ -7,4 +7,5 @@ public interface IPartner : IGenericRepository<Partner>
 {
     Task<IEnumerable<PartnerResponse>> GetPartnerWithPolicies();
     Task<PartnerResponse> GetPartnerWithPoliciesById(int id);
+    Task<IEnumerable<PartnerResponse>> GetPartnersForPolicy(string policyNumber);
 }
