@@ -1,4 +1,6 @@
 using Backend.DataAccess.DbConnection;
+using Backend.DataAccess.Repositories;
+using Backend.DataAccess.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
+builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
+
+builder.Services.AddScoped<IPartner, PartnerRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
