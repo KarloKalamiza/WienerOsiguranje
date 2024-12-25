@@ -4,6 +4,7 @@ using Backend.Mappers;
 using Backend.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.DataAccess.Repositories;
 
@@ -206,13 +207,73 @@ public class PartnerRepository : IPartner
         }
     }
 
-    public Task<int> Remove(int id)
+    public async Task<int> Remove(int id)
     {
-        throw new NotImplementedException();
+        if (id < 1)
+            throw new ArgumentOutOfRangeException(nameof(id), "Invalid ID");
+
+        try
+        {
+            string query = "DELETE FROM Partner WHERE PartnerId = @PartnerId";
+            int count = await _sqlConnection.ExecuteAsync(query, new { PartnerId = id });
+            if (count == 0)
+                throw new Exception($"Failed while executing SQL query for id: {id}");
+
+            return count;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     public Task<Partner> Update(Partner model)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<int> SoftDeletePartner(string externalCode, string deletedByUser)
+    {
+        if (string.IsNullOrEmpty(externalCode) || string.IsNullOrEmpty(deletedByUser))
+            throw new ArgumentNullException(nameof(externalCode));
+
+        try
+        {
+            // find partner from external code
+            string findPartnerQuery = "SELECT * FROM Partner WHERE ExternalCode = @ExternalCode";
+            Partner partner = await _sqlConnection.QuerySingleAsync<Partner>(findPartnerQuery, new { ExternalCode = externalCode });
+            IEnumerable<PartnerResponse> partners = await GetPartnerWithPolicies();
+
+            PartnerResponse? partnerResponse = partners.FirstOrDefault(p => p.ExternalCode == externalCode);
+            if (partnerResponse == null)
+                throw new Exception();
+
+            if (partnerResponse.Policies.IsNullOrEmpty())
+            {
+                // insert partner into deleted partner database table
+                DeletedPartner deletedPartner = PartnerMapper.MapToDeletedPartner(partner, deletedByUser);
+                string insertQuery = "INSERT INTO DeletedPartner " +
+                    "(PartnerId, FirstName, LastName, Address, PartnerNumber, CroatianPIN, PartnerTypeId, CreatedAtUtc, CreatedByUser, IsForeign, ExternalCode, Gender, DeletedAtUtc, DeletedByUser) " +
+                    "OUTPUT INSERTED.PartnerId, INSERTED.FirstName, INSERTED.LastName, INSERTED.Address, INSERTED.PartnerNumber, INSERTED.CroatianPIN, INSERTED.PartnerTypeId, INSERTED.CreatedAtUtc, INSERTED.CreatedByUser, INSERTED.IsForeign, INSERTED.ExternalCode, INSERTED.Gender, INSERTED.DeletedAtUtc, INSERTED.DeletedByUser " +
+                    "VALUES (@PartnerId, @FirstName, @LastName, @Address, @PartnerNumber, @CroatianPIN, @PartnerTypeId, @CreatedAtUtc, @CreatedByUser, @IsForeign, @ExternalCode, @Gender, @DeletedAtUtc, @DeletedByUser);";
+
+
+                DeletedPartner insertedDeletedPartner = await _sqlConnection.QuerySingleAsync<DeletedPartner>(insertQuery, deletedPartner);
+
+                // delete record from table Partners 
+                int count = await Remove(partner.PartnerId);
+                if (count == 0)
+                    throw new Exception($"Failed to remove partner with ID: {partner.PartnerId}");
+                return count; 
+            }
+            else
+            {
+                throw new Exception("Cannot delete partner with existing policies.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

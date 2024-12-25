@@ -3,6 +3,7 @@ using Backend.DataAccess.Data.Responses;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace Backend.Controllers;
 
@@ -65,5 +66,40 @@ public class PartnerController : ControllerBase
         if (partner is null)
             return BadRequest();
         return Ok(partner);
+    }
+
+    [HttpDelete("DeletePartner/{id}")]
+    public async Task<ActionResult<int>> DeletePartner(int id)
+    {
+        if (id < 1)
+            return BadRequest();
+
+        int count = await _unitOfWork.Partners.Remove(id);
+        if (count == 0)
+            return NotFound();
+
+        return Ok(count);
+    }
+
+    [HttpDelete("SoftDeleteUser/{externalCode}")] 
+    public async Task<ActionResult<int>> SoftDeletePartner(string externalCode, [FromQuery] string deletedByUser)
+    {
+        if (string.IsNullOrEmpty(externalCode))
+            return BadRequest("External code is required");
+
+        if (string.IsNullOrEmpty(deletedByUser) || !IsValidEmail(deletedByUser))
+            return BadRequest("DeletedByUser is required and in email valid format");
+
+        int count = await _unitOfWork.Partners.SoftDeletePartner(externalCode, deletedByUser);
+        if (count == 0)
+            return NotFound();
+
+        return Ok(count);
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        return Regex.IsMatch(email, emailRegex);
     }
 }

@@ -134,14 +134,47 @@ namespace Backend.DataAccess.Repositories
         }
 
 
-        public Task<int> Remove(int id)
+        public async Task<int> Remove(int id)
         {
-            throw new NotImplementedException();
+            if (id == 0)
+                throw new Exception($"Invalid ID: {id}");
+            
+            try
+            {
+                string query = "DELETE FROM InsurancePolicy WHERE InsurancePolicyId = @InsurancePolicyId";
+                int count = await _sqlConnection.ExecuteAsync(query, new { InsurancePolicyId = id });
+                if (count == 0)
+                    throw new Exception($"Policy with id: {id} was not deleted.");
+                return count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public Task<InsurancePolicy> Update(InsurancePolicy model)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> RemovePolicyByPolicyNumber(string policyNumber)
+        {
+            if (string.IsNullOrEmpty(policyNumber))
+                throw new Exception("Policy number is required");
+
+            try
+            {
+                string query = "DELETE FROM InsurancePolicy WHERE PolicyNumber = @PolicyNumber";
+                int count = await _sqlConnection.ExecuteAsync(query, new { PolicyNumber = policyNumber });
+                if (count == 0)
+                    throw new Exception($"Failed to delete policy with number: {policyNumber}");
+                return count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Backend.Controllers
         public async Task<ActionResult<IEnumerable<InsurancePolicy>>> GetPolicies()
         {
             IEnumerable<InsurancePolicy> policies = await _unitOfWork.Policies.Get();
-            if (policies is null) 
+            if (policies is null)
                 return NotFound();
             return Ok(policies);
         }
@@ -56,6 +56,32 @@ namespace Backend.Controllers
             if (partnerResponse is null)
                 return NotFound();
             return Ok(partnerResponse);
+        }
+
+        [HttpDelete("DeletePolicy/{id}")]
+        public async Task<ActionResult<int>> DeletePolicy(int id)
+        {
+            if (id < 1)
+                return BadRequest();
+
+            int count = await _unitOfWork.Policies.Remove(id);
+            if (count == 0)
+                return NotFound();
+
+            return Ok(count);
+        }
+
+        [HttpDelete("DeletePolicyByNumber/{policyNumber}")]
+        public async Task<ActionResult<int>> DeletePolicyByNumber(string policyNumber)
+        {
+            if (string.IsNullOrEmpty(policyNumber))
+                return BadRequest();
+
+            int count = await _unitOfWork.Policies.RemovePolicyByPolicyNumber(policyNumber);
+            if (count == 0)
+                return NotFound();
+
+            return Ok(count);
         }
     }
 }

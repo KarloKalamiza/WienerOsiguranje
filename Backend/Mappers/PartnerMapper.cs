@@ -26,6 +26,27 @@ public class PartnerMapper
         };
     }
 
+    public static DeletedPartner MapToDeletedPartner(Partner partner, string deletedByUser)
+    {
+        return new DeletedPartner
+        {
+            PartnerId = partner.PartnerId,
+            FirstName = partner.FirstName,
+            LastName = partner.LastName,
+            Address = partner.Address,
+            PartnerNumber = partner.PartnerNumber,
+            CroatianPIN = partner.CroatianPIN,
+            PartnerTypeId = partner.PartnerTypeId,
+            CreatedAtUtc = partner.CreatedAtUtc,
+            CreatedByUser = partner.CreatedByUser,
+            IsForeign = partner.IsForeign,
+            ExternalCode = partner.ExternalCode,
+            Gender = partner.Gender.ToString(),
+            DeletedByUser = deletedByUser,
+            DeletedAtUtc = DateTime.UtcNow,
+        };
+    }
+
     private static string FormatGenderDatabaseSaving(GenderType gender)
     {
         return gender switch
@@ -79,4 +100,6 @@ public class PartnerMapper
             _ => "Unknown"
         };
     }
+
+
 }

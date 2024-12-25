@@ -10,4 +10,5 @@ public interface IPartner : IGenericRepository<Partner>
     Task<PartnerResponse> GetPartnerWithPoliciesById(int id);
     Task<IEnumerable<PartnerResponse>> GetPartnersForPolicy(string policyNumber);
     Task<Partner> InsertPartner(PartnerRequest partnerRequest);
+    Task<int> SoftDeletePartner(string externalCode, string deletedByUser);
 }
