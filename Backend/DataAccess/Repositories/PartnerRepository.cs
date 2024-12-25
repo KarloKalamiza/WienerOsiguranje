@@ -1,4 +1,5 @@
-﻿using Backend.DataAccess.Data.Responses;
+﻿using Backend.DataAccess.Data.Requests;
+using Backend.DataAccess.Data.Responses;
 using Backend.Mappers;
 using Backend.Models;
 using Dapper;
@@ -17,6 +18,54 @@ public class PartnerRepository : IPartner
         _configuration = configuration;
         _sqlConnection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
     }
+
+    public async Task<Partner> InsertPartner(PartnerRequest partnerRequest)
+    {
+        try
+        {
+            Partner partner = PartnerMapper.MapToPartner(partnerRequest);
+            string query = @"
+                INSERT INTO Partner (
+                    FirstName,
+                    LastName,
+                    Address,
+                    PartnerNumber,
+                    CroatianPIN,
+                    PartnerTypeId,
+                    CreatedAtUtc,
+                    CreatedByUser,
+                    IsForeign,
+                    ExternalCode,
+                    Gender
+                )
+                OUTPUT INSERTED.PartnerId
+                VALUES (
+                    @FirstName,
+                    @LastName,
+                    @Address,
+                    @PartnerNumber,
+                    @CroatianPIN,
+                    @PartnerTypeId,
+                    @CreatedAtUtc,
+                    @CreatedByUser,
+                    @IsForeign,
+                    @ExternalCode,
+                    @Gender
+                );";
+
+            int generatedid = await _sqlConnection.QuerySingleAsync<int>(query, partner);
+            if (generatedid == 0)
+                throw new Exception($"Insert into database failed for partner: {partner}");
+            partner.PartnerId = generatedid;
+
+            return partner;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
     public Task<Partner> Add(Partner model)
     {
         throw new NotImplementedException();

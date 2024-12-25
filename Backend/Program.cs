@@ -1,6 +1,11 @@
+using Backend.DataAccess.Data.Requests;
 using Backend.DataAccess.DbConnection;
 using Backend.DataAccess.Repositories;
 using Backend.DataAccess.UnitOfWork;
+using Backend.DataAccess.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +21,10 @@ builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IPartner, PartnerRepository>();
 builder.Services.AddScoped<IPolicy, PolicyRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<IValidator<PartnerRequest>, PartnerRequestValidator>();
+builder.Services.AddScoped<IValidator<InsurancePolicyRequest>, InsurancePolicyRequestValidator>();
 
 var app = builder.Build();
 

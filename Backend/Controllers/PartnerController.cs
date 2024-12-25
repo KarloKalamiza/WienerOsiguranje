@@ -1,4 +1,5 @@
-﻿using Backend.DataAccess.Data.Responses;
+﻿using Backend.DataAccess.Data.Requests;
+using Backend.DataAccess.Data.Responses;
 using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -45,9 +46,24 @@ public class PartnerController : ControllerBase
     [HttpGet("PartnersFilteredByPolicyNumber/{policyNumber}")]
     public async Task<ActionResult<IEnumerable<PartnerResponse>>> GetPartnersFilteredByPartnerNumber(string policyNumber)
     {
+        if (string.IsNullOrEmpty(policyNumber))
+            return NotFound("Policy number is required");
+
         IEnumerable<PartnerResponse> partners = await _unitOfWork.Partners.GetPartnersForPolicy(policyNumber);
         if (partners is null)
             return NotFound();
         return Ok(partners);
+    }
+
+    [HttpPost("CreatePartner")]
+    public async Task<ActionResult<Partner>> CreatePartner([FromBody] PartnerRequest partnerRequest)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        Partner partner = await _unitOfWork.Partners.InsertPartner(partnerRequest);
+        if (partner is null)
+            return BadRequest();
+        return Ok(partner);
     }
 }

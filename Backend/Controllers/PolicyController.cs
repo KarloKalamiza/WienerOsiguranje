@@ -1,4 +1,6 @@
-﻿using Backend.DataAccess.UnitOfWork;
+﻿using Backend.DataAccess.Data.Requests;
+using Backend.DataAccess.Data.Responses;
+using Backend.DataAccess.UnitOfWork;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +32,30 @@ namespace Backend.Controllers
             if (insurancePolicy is null)
                 return NotFound();
             return Ok(insurancePolicy);
+        }
+
+        [HttpPost("CreatePolicy")]
+        public async Task<ActionResult<InsurancePolicy>> AddPolicy(InsurancePolicyRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            InsurancePolicy insurancePolicy = await _unitOfWork.Policies.InsertPolicy(request);
+            if (insurancePolicy is null)
+                return NotFound();
+            return Ok(insurancePolicy);
+        }
+
+        [HttpPost("CreatePolicyForPartner")]
+        public async Task<ActionResult<PartnerResponse>> CreatePolicyForUser(string externalCode, InsurancePolicyRequest request)
+        {
+            if (string.IsNullOrEmpty(externalCode) || !ModelState.IsValid)
+                return BadRequest();
+
+            PartnerResponse partnerResponse = await _unitOfWork.Policies.CreatePolicyForPartner(request, externalCode);
+            if (partnerResponse is null)
+                return NotFound();
+            return Ok(partnerResponse);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Backend.DataAccess.Data.Requests;
+﻿using Backend.Converters;
+using Backend.DataAccess.Data.Requests;
 using Backend.DataAccess.Data.Responses;
 using Backend.Enums;
 using Backend.Models;
@@ -21,7 +22,18 @@ public class PartnerMapper
             CreatedByUser = partnerRequest.CreatedByUser,
             IsForeign = partnerRequest.IsForeign,
             ExternalCode = partnerRequest.ExternalCode,
-            Gender = partnerRequest.Gender
+            Gender = partnerRequest.Gender.ToString(),
+        };
+    }
+
+    private static string FormatGenderDatabaseSaving(GenderType gender)
+    {
+        return gender switch
+        {
+            GenderType.M => "M",
+            GenderType.F => "F",
+            GenderType.N => "N",
+            _ => "Unknown"
         };
     }
 
@@ -57,13 +69,13 @@ public class PartnerMapper
         };
     }
 
-    private static string FormatGender(GenderType gender)
+    private static string FormatGender(string? gender)
     {
         return gender switch
         {
-            GenderType.M => "Male",
-            GenderType.F => "Female",
-            GenderType.N => "Other",
+            "M" => "Male",
+            "F" => "Female",
+            "N" => "Other",
             _ => "Unknown"
         };
     }
