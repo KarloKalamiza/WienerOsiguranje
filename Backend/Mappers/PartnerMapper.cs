@@ -62,6 +62,7 @@ public class PartnerMapper
     {
         return new PartnerResponse
         {
+            PartnerId = partner.PartnerId,
             FullName = $"{partner.FirstName} {partner.LastName}",
             Address = partner.Address,
             PartnerNumber = partner.PartnerNumber,
@@ -72,8 +73,9 @@ public class PartnerMapper
             IsForeign = partner.IsForeign,
             ExternalCode = partner.ExternalCode,
             Gender = FormatGender(partner.Gender),
-            Policies = policies?.Select(policy => new InsurancePolicyResponse
+            Policies = policies?.Select(policy => new InsurancePolicy
             {
+                InsurancePolicyId = policy!.InsurancePolicyId,
                 PolicyNumber = policy!.PolicyNumber,
                 PolicyAmount = policy.PolicyAmount
             }).ToList()

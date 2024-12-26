@@ -1,6 +1,7 @@
 ﻿using Backend.DataAccess.Data.Requests;
 using Backend.DataAccess.Data.Responses;
 using Backend.DataAccess.UnitOfWork;
+using Backend.Mappers;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -101,5 +102,21 @@ public class PartnerController : ControllerBase
     {
         var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         return Regex.IsMatch(email, emailRegex);
+    }
+
+    [HttpPut("UpdatePartner/{id}")]
+    public async Task<ActionResult<int>> UpdatePartner(int id, [FromBody] PartnerRequest request)
+    {
+        if (id < 1)
+            return BadRequest($"Invalid ID: {id}");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        int count = await _unitOfWork.Partners.UpdatePartner(id, request);
+        if (count == 0)
+            return NotFound();
+
+        return Ok(count);
     }
 }

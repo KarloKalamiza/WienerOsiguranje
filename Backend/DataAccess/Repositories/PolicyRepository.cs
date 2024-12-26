@@ -42,7 +42,7 @@ namespace Backend.DataAccess.Repositories
             int insuranceId = insurancePolicy.InsurancePolicyId;
             InsurancePolicyResponse insuranceResponse = InsurancePolicyMapper.MapToInsurancePolicyResponse(insurancePolicy);
 
-            InsertIntoPartnerResponse(filteredPartner, insuranceResponse);
+            InsertIntoPartnerResponse(filteredPartner, insurancePolicy);
             InsertIntoTablePartnerPolicy(partnerId, insuranceId);
 
             return filteredPartner;
@@ -63,12 +63,12 @@ namespace Backend.DataAccess.Repositories
             }
         }
 
-        private void InsertIntoPartnerResponse(PartnerResponse partnerResponse, InsurancePolicyResponse insuranceResponse)
+        private void InsertIntoPartnerResponse(PartnerResponse partnerResponse, InsurancePolicy insurance)
         {
             if (partnerResponse.Policies == null)
                 partnerResponse.Policies = [];
 
-            partnerResponse.Policies.Add(insuranceResponse);
+            partnerResponse.Policies.Add(insurance);
         }
 
         public Task<InsurancePolicy> Find(int id)
@@ -153,9 +153,23 @@ namespace Backend.DataAccess.Repositories
             }
         }
 
-        public Task<InsurancePolicy> Update(InsurancePolicy model)
+        public async Task<InsurancePolicy> Update(InsurancePolicy model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+                throw new Exception("Insurance policy is required to be updated.");
+
+            try
+            {
+                string updateQuery = "UPDATE InsurancePolicy SET PolicyNumber = @PolicyNumber, PolicyAmount = @PolicyAmount WHERE @InsurancePolicyId = @InsurancePolicyId";
+                int count = await _sqlConnection.ExecuteAsync(updateQuery, model);
+                if (count == 0)
+                    throw new Exception($"Failed to update policy with ID: {model.InsurancePolicyId}");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<int> RemovePolicyByPolicyNumber(string policyNumber)
@@ -169,6 +183,39 @@ namespace Backend.DataAccess.Repositories
                 int count = await _sqlConnection.ExecuteAsync(query, new { PolicyNumber = policyNumber });
                 if (count == 0)
                     throw new Exception($"Failed to delete policy with number: {policyNumber}");
+                return count;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> UpdatePolicy(int id, InsurancePolicyRequest request)
+        {
+            if (id < 1)
+                throw new ArgumentOutOfRangeException($"Invalid Id: {id}");
+            if (request == null)
+                throw new ArgumentOutOfRangeException("Insurance request is required");
+
+            try
+            {
+                string updateQuery = @"
+                    UPDATE InsurancePolicy
+                    SET PolicyNumber = @PolicyNumber,
+                        PolicyAmount = @PolicyAmount
+                    WHERE InsurancePolicyId = @InsurancePolicyId
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM InsurancePolicy
+                          WHERE PolicyNumber = @PolicyNumber
+                            AND InsurancePolicyId != @InsurancePolicyId
+                      );";
+                InsurancePolicy insurancePolicy = InsurancePolicyMapper.MapToInsurancePolicy(request);
+                insurancePolicy.InsurancePolicyId = id;
+                int count = await _sqlConnection.ExecuteAsync(updateQuery, insurancePolicy);
+                if (count == 0)
+                    throw new Exception($"Failed updating policy with ID: {id}");
                 return count;
             }
             catch (Exception ex)

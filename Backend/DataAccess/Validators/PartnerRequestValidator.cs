@@ -31,7 +31,8 @@ public class PartnerRequestValidator : AbstractValidator<PartnerRequest>
             .EmailAddress().WithMessage("Must be valid email address.")
             .MaximumLength(255).WithMessage("Email (CreatedyUser field) cannot be longer than 255 characters");
         RuleFor(p => p.IsForeign)
-            .NotEmpty().WithMessage("Is foreign field is required");
+            .Must(value => value == true || value == false)
+            .WithMessage("The IsForeign field must be either true or false.");
         RuleFor(p => p.ExternalCode)
             .NotEmpty().WithMessage("External code is required.")
             .MinimumLength(10).WithMessage("External code bust be minimum 10 characters long.")

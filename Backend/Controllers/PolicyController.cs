@@ -83,5 +83,20 @@ namespace Backend.Controllers
 
             return Ok(count);
         }
+
+        [HttpPut("UpdatePolicy/{id}")]
+        public async Task<ActionResult<int>> UpdatePolicy(int id, [FromBody] InsurancePolicyRequest request)
+        {
+            if (id < 1)
+                return BadRequest("Invalid ID");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            int count = await _unitOfWork.Policies.UpdatePolicy(id, request);
+            if (count == 0)
+                return NotFound();
+
+            return Ok(count);
+        }
     }
 }

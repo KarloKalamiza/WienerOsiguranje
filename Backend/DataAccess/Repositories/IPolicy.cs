@@ -10,4 +10,5 @@ public interface IPolicy : IGenericRepository<InsurancePolicy>
     Task<InsurancePolicy> InsertPolicy(InsurancePolicyRequest insurancePolicyRequest);
     Task<PartnerResponse> CreatePolicyForPartner(InsurancePolicyRequest insurancePolicyRequest, string externalCode);
     Task<int> RemovePolicyByPolicyNumber(string policyNumber);
+    Task<int> UpdatePolicy(int id, InsurancePolicyRequest request);
 }

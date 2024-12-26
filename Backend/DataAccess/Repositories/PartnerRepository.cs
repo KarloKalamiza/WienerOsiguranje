@@ -114,10 +114,10 @@ public class PartnerRepository : IPartner
 
             // Query to fetch policies associated with partners
             var policiesQuery = @"
-        SELECT 
-            pp.PartnerId, 
-            pp.InsurancePolicyId
-        FROM PartnerPolicy pp";
+                SELECT 
+                    pp.PartnerId, 
+                    pp.InsurancePolicyId
+                FROM PartnerPolicy pp";
 
             // Fetch Partner-Policy mappings
             var partnerPolicies = await _sqlConnection.QueryAsync(policiesQuery);
@@ -270,6 +270,43 @@ public class PartnerRepository : IPartner
             {
                 throw new Exception("Cannot delete partner with existing policies.");
             }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<int> UpdatePartner(int id, PartnerRequest request)
+    {
+        if (id < 0)
+            throw new ArgumentOutOfRangeException($"Invalid ID: {id}");
+        if (request == null)
+            throw new ArgumentOutOfRangeException("Partner request is required.");
+
+        try
+        {
+            string updateQuery = @"UPDATE Partner
+                SET
+                    FirstName = @FirstName,
+                    LastName = @LastName,
+                    Address = @Address,
+                    PartnerNumber = @PartnerNumber,
+                    CroatianPIN = @CroatianPIN,
+                    PartnerTypeId = @PartnerTypeId,
+                    CreatedByUser = @CreatedByUser,
+                    IsForeign = @IsForeign,
+                    ExternalCode = @ExternalCode,
+                    Gender = @Gender
+                WHERE PartnerId = @PartnerId;";
+            Partner partner = PartnerMapper.MapToPartner(request);
+            partner.PartnerId = id;
+
+            int count = await _sqlConnection.ExecuteAsync(updateQuery, partner);
+            if (count == 0)
+                throw new Exception($"Update failed for partner with id: {id}");
+
+            return count;
         }
         catch (Exception ex)
         {

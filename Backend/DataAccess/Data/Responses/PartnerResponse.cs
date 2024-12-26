@@ -1,9 +1,11 @@
 ﻿using Backend.Enums;
+using Backend.Models;
 
 namespace Backend.DataAccess.Data.Responses;
 
 public class PartnerResponse
 {
+    public int PartnerId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public string PartnerNumber { get; set; } = string.Empty;
@@ -14,5 +16,5 @@ public class PartnerResponse
     public bool IsForeign { get; set; }
     public string ExternalCode { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
-    public List<InsurancePolicyResponse>? Policies { get; set; }
+    public List<InsurancePolicy>? Policies { get; set; }
 }
