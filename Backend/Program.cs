@@ -1,8 +1,9 @@
-using Backend.DataAccess.Data.Requests;
-using Backend.DataAccess.DbConnection;
-using Backend.DataAccess.Repositories;
-using Backend.DataAccess.UnitOfWork;
-using Backend.DataAccess.Validators;
+using Backend.Application.Validators;
+using Backend.Core.Interfaces.Repositories;
+using Backend.Core.Interfaces.Services;
+using Backend.Infrastructure.Data.Requests;
+using Backend.Infrastructure.Repositories;
+using Backend.Infrastructure.UnitOfWork;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -15,8 +16,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
 
 builder.Services.AddScoped<IPartner, PartnerRepository>();
 builder.Services.AddScoped<IPolicy, PolicyRepository>();
