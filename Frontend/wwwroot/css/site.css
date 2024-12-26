@@ -1,22 +1,168 @@
-html {
-  font-size: 14px;
+﻿/* Customize table headers */
+#myTable thead th {
+    background-color: #158cba;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Change table row hover color */
+#myTable tbody tr:hover {
+    background-color: #f2f2f2;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 15px;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.dataTables_wrapper .dataTables_length {
+    float: left; /* Align length dropdown to the left */
 }
 
-body {
-  margin-bottom: 60px;
+.dataTables_wrapper .dataTables_filter {
+    float: right; /* Align search bar to the right */
+}
+
+/* Customize the search box */
+.dataTables_filter label {
+    font-weight: bold; /* Makes the "Search:" label bold */
+    margin-right: 10px; /* Adds spacing between label and input */
+}
+
+.dataTables_filter input {
+    border: 1px solid #007bff;
+    border-radius: 20px; /* More rounded corners */
+    padding: 8px 15px;
+    width: 250px; /* Wider search box */
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+    /* Focus effect for input box */
+    .dataTables_filter input:focus {
+        border-color: #0056b3;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    }
+
+/* Adjust length dropdown */
+.dataTables_length select {
+    border: 1px solid #007bff;
+    border-radius: 20px;
+    padding: 5px 10px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+    /* Style dropdown hover */
+    .dataTables_length select:hover {
+        border-color: #0056b3;
+    }
+
+/* Center the table footer and pagination */
+.dataTables_info {
+    text-align: left;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+
+/* Style the pagination arrows */
+.dataTables_paginate .paginate_button span {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #158cba;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px; /* Adds spacing between circles */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for the pagination arrows */
+.dataTables_paginate .paginate_button:hover span {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Current page arrow style */
+.dataTables_paginate .paginate_button.current span {
+    background-color: #158cba;
+    color: white;
+    border: 2px solid #003c7a; /* Optional border for current page */
+}
+
+
+/*CUSTOMIZE CHECKBOX CELL form ISFOREIGN*/
+.checkbox-cell {
+    text-align: center; /* Centers the checkbox horizontally */
+    vertical-align: middle; /* Aligns the checkbox vertically */
+    padding: 10px; /* Adds some padding for better spacing */
+    background-color: #f9f9f9; /* Light background color */
+    border: 1px solid #ddd; /* Adds a subtle border */
+    border-radius: 4px; /* Optional: Makes the corners rounded */
+}
+
+.checkbox-cell input[type="checkbox"] {
+    transform: scale(1.2); /* Enlarges the checkbox slightly */
+    cursor: pointer; /* Adds a pointer cursor to the checkbox */
+}
+
+.checkbox-cell i {
+        font-size: 1.2em; /* Adjust icon size */
+        padding: 5px;
+}
+
+.table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-striped tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table-dark th {
+    background-color: #343a40;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.checkbox-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+    .checkbox-cell i {
+        font-size: 1.2em;
+    }
+
+.actions a {
+    margin-right: 8px;
 }

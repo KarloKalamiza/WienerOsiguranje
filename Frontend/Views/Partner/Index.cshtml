@@ -1,0 +1,108 @@
+﻿@model IEnumerable<Frontend.DTO.PartnerDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<a asp-action="Create" class="btn btn-primary btn-lg mb-4">Add Partner</a>
+
+<table id="myTable" class="table table-bordered table-hover table-striped mb-2">
+    <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayName("Full name")
+            </th>
+            <th>
+                @Html.DisplayName("Partner number")
+            </th>
+            <th>
+                @Html.DisplayName("PIN")
+            </th>
+            <th>
+                @Html.DisplayName("Partner type")
+            </th>
+            <th>
+                @Html.DisplayName("Creation date")
+            </th>
+            <th>
+                @Html.DisplayName("Foreign")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) 
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialPartnerSign)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PartnerNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CroatianPIN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PartnerTypeId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAtUtc)
+                </td>
+                <td class="checkbox-cell">
+                    @if (item.IsForeign)
+                    {
+                        <i class="fa fa-check text-success"></i> 
+                    }
+                    else
+                    {
+                        <i class="fa fa-times text-danger"></i> 
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    <!-- Edit Icon -->
+                    <a asp-action="Edit" @* asp-route-id="@item.Id" *@ class="text-primary" title="Edit">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <!-- Delete Icon -->
+                    <a asp-action="Delete" @* asp-route-id="@item.Id" *@ class="text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this product?');">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#myTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "lengthMenu": [10, 25, 50],
+                "order": [[4, "desc"]], // Default sorting: 4th column, descending
+                "language": {
+                    "emptyTable": "No data available in table",
+                    "search": "Filter records:",
+                    "paginate": {
+                        "previous": '<span>&lt;</span>',
+                        "next": '<span>&gt;</span>'
+                    }
+                }
+            });
+        });
+    </script>
+} 
