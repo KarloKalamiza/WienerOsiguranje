@@ -1,0 +1,92 @@
+﻿@model Frontend.Request.PartnerRequest
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h4>Create New Partner</h4>
+        <form id="createPartnerForm" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="FirstName" class="control-label">First name</label>
+                        <input asp-for="FirstName" class="form-control"/>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Address" class="control-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PartnerNumber" class="control-label">Partner number</label>
+                        <input asp-for="PartnerNumber" class="form-control" />
+                        <span asp-validation-for="PartnerNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PartnerTypeId" class="form-label">Partner type:</label>
+                        <select asp-for="PartnerTypeId" class="form-select">
+                            <option value="">Select partner type</option>
+                            <option value="1">Personal</option>
+                            <option value="2">Legal</option>
+                        </select>
+                        <span asp-validation-for="PartnerTypeId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Gender" class="form-label">Gender:</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">Select Gender</option>
+                            <option value="0">Male</option>
+                            <option value="1">Female</option>
+                            <option value="2">Other</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="IsForeign" /> @Html.DisplayNameFor(model => model.IsForeign)
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="LastName" class="control-label">Last name</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CroatianPIN" class="control-label">PIN</label>
+                        <input asp-for="CroatianPIN" class="form-control" />
+                        <span asp-validation-for="CroatianPIN" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CreatedByUser" class="control-label">Admin email</label>
+                        <input asp-for="CreatedByUser" class="form-control" />
+                        <span asp-validation-for="CreatedByUser" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ExternalCode" class="control-label">External code</label>
+                        <input asp-for="ExternalCode" class="form-control" />
+                        <span asp-validation-for="ExternalCode" class="text-danger"></span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Create" class="btn btn-primary btn-lg" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @* @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive"></script>
+}

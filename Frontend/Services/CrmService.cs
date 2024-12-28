@@ -1,7 +1,11 @@
 ﻿using Frontend.DTO;
+using Frontend.Errors;
 using Frontend.Mappers;
 using Frontend.Models;
+using Frontend.Request;
+using Frontend.Responses;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Frontend.Services;
 
@@ -35,7 +39,7 @@ public class CrmService
             }
             else
             {
-                throw new Exception($"Failed to fetch products: {response.StatusCode}");
+                throw new Exception($"Failed to fetch partners: {response.StatusCode}");
             }
         }
         catch (Exception ex)
@@ -43,4 +47,40 @@ public class CrmService
             throw new Exception(ex.Message);
         }
     }
-}
+
+    public async Task<ServiceResponse> CreatePartner(PartnerRequest partner)
+    {
+        try
+        {
+            string serializedPartner = JsonConvert.SerializeObject(partner);
+            var content = new StringContent(serializedPartner, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync("api/Partner/CreatePartner", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                PartnerDTO partnerDTO = JsonConvert.DeserializeObject<PartnerDTO>(data) ?? throw new Exception();
+
+                return new ServiceResponse
+                {
+                    Success = true,
+                    Data = partnerDTO
+                };
+            }
+            else
+            {
+                string errorDetails = await response.Content.ReadAsStringAsync();
+                ServiceResponse formatedResponse = ErrorHandler.HandleUniqueError(errorDetails); ;
+                return formatedResponse;
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse
+            {
+                Success = false,
+                ErrorMessage = $"Failed to add partner: {ex.Message}"
+            };
+        }
+    }
+ }

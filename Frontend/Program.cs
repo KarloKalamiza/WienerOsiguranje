@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Frontend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<CrmService>();
+
+builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 

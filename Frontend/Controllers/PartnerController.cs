@@ -1,4 +1,8 @@
-﻿using Frontend.Services;
+﻿using Frontend.DTO;
+using Frontend.Models;
+using Frontend.Request;
+using Frontend.Responses;
+using Frontend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +18,17 @@ public class PartnerController : Controller
     }
 
     // GET: PartnerController
-    public async Task<ActionResult> Index()
+    //public async Task<ActionResult> Index()
+    //{
+    //    List<DTO.PartnerDTO> partnerDTOs = await _crmService.GetPartners();
+    //    return View(partnerDTOs);
+    //}
+
+    public async Task<ActionResult> Index(int? newId = null)
     {
         List<DTO.PartnerDTO> partnerDTOs = await _crmService.GetPartners();
+        PartnerDTO? partnerDTO = partnerDTOs.FirstOrDefault();
+        ViewBag.NewId = newId;
         return View(partnerDTOs);
     }
 
@@ -27,7 +39,7 @@ public class PartnerController : Controller
     }
 
     // GET: PartnerController/Create
-    public ActionResult Create()
+    public ActionResult<PartnerRequest> Create()
     {
         return View();
     }
@@ -35,15 +47,35 @@ public class PartnerController : Controller
     // POST: PartnerController/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    public async Task<ActionResult> Create(PartnerRequest request)
     {
         try
         {
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            ServiceResponse response = await _crmService.CreatePartner(request);
+
+            if (!response.Success)
+            {
+                ModelState.AddModelError(string.Empty, response.ErrorMessage);
+                return View(request);
+            }
+
+            if (response.Data is PartnerDTO createdPartner)
+            {
+                return RedirectToAction(nameof(Index), new { newId = createdPartner.PartnerId });
+            }
+
+            ModelState.AddModelError(string.Empty, "Failed to extract partner ID.");
+            return View(request);
         }
-        catch
+        catch (Exception ex)
         {
-            return View();
+            ModelState.AddModelError(string.Empty, "An unexpected error occurred: " + ex.Message);
+            return View(request);
         }
     }
 
