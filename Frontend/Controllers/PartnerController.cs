@@ -33,9 +33,22 @@ public class PartnerController : Controller
     }
 
     // GET: PartnerController/Details/5
-    public ActionResult Details(int id)
+    public async Task<ActionResult> Details(int id)
     {
-        return View();
+        ServiceResponse serviceResponse = await _crmService.GetById(id);
+        if (serviceResponse != null && serviceResponse.Success)
+        {
+            if (serviceResponse.Data is not PartnerDTO partner)
+            {
+                return NotFound();
+            }
+
+            return View("Details", partner);
+        }
+        else
+        {
+            return NotFound();
+        }
     }
 
     // GET: PartnerController/Create

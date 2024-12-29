@@ -39,7 +39,7 @@ public class CrmService
             }
             else
             {
-                throw new Exception($"Failed to fetch partners: {response.StatusCode}");
+                return [];
             }
         }
         catch (Exception ex)
@@ -83,4 +83,37 @@ public class CrmService
             };
         }
     }
- }
+
+    public async Task<ServiceResponse> GetById(int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/Partner/PartnersWithPoliciesByID/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                string data = response.Content.ReadAsStringAsync().Result;
+                var partner = JsonConvert.DeserializeObject<PartnerDTO>(data) ?? new();
+
+                return new ServiceResponse 
+                {
+                    Success = true,
+                    Data = partner,
+                    ErrorMessage = ""
+                };
+            }
+            else
+            {
+                return new ServiceResponse { Success = false, ErrorMessage = $"Failed to load information for partner with ID: {id}" };
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse
+            {
+                Success = false,
+                ErrorMessage = $"Failed to add partner: {ex.Message}"
+            };
+        }
+    }
+}
