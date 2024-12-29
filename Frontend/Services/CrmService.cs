@@ -34,7 +34,7 @@ public class CrmService
                     PartnerDTO partnerDTO = PartnerMapper.MapToDTO(partner);
                     partnerDTOs.Add(partnerDTO);
                 }
-                partnerDTOs.Sort((x,y) => y.CreatedAtUtc.CompareTo(x.CreatedAtUtc));
+                partnerDTOs.Sort((x, y) => y.CreatedAtUtc.CompareTo(x.CreatedAtUtc));
                 return partnerDTOs;
             }
             else
@@ -55,7 +55,7 @@ public class CrmService
             string serializedPartner = JsonConvert.SerializeObject(partner);
             var content = new StringContent(serializedPartner, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PostAsync("api/Partner/CreatePartner", content);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 string data = response.Content.ReadAsStringAsync().Result;
@@ -94,7 +94,7 @@ public class CrmService
                 string data = response.Content.ReadAsStringAsync().Result;
                 var partner = JsonConvert.DeserializeObject<PartnerDTO>(data) ?? new();
 
-                return new ServiceResponse 
+                return new ServiceResponse
                 {
                     Success = true,
                     Data = partner,
@@ -114,6 +114,97 @@ public class CrmService
                 Success = false,
                 ErrorMessage = $"Failed to add partner: {ex.Message}"
             };
+        }
+    }
+
+    public async Task<ServiceResponse> CreatePolicyForPartner(string externalCode, InsurancePolicyRequest policy)
+    {
+        try
+        {
+            string serializedObject = JsonConvert.SerializeObject(policy);
+            StringContent content = new(serializedObject, Encoding.UTF8, "application/json");
+            HttpResponseMessage httpResponse = await _httpClient.PostAsync($"api/Policy/CreatePolicyForPartner?externalCode={externalCode}", content);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                string data = httpResponse.Content.ReadAsStringAsync().Result;
+                InsurancePolicy createdPolicy = JsonConvert.DeserializeObject<InsurancePolicy>(data) ?? throw new Exception();
+
+                return new ServiceResponse() { Success = true, Data = createdPolicy, ErrorMessage = "" };
+            }
+            else
+            {
+                string errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                ServiceResponse formatedResponse = ErrorHandler.HandleUniqueError(errorDetails);
+                return formatedResponse;
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
+        }
+    }
+
+    public async Task<ServiceResponse> FindPolicyByPolicyNumber(string policyNumber)
+    {
+        try
+        {
+            HttpResponseMessage httpResponse = await _httpClient.GetAsync($"api/Policy/Policies/{policyNumber}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                string data = httpResponse.Content.ReadAsStringAsync().Result;
+                InsurancePolicy insurancePolicy = JsonConvert.DeserializeObject<InsurancePolicy>(data) ?? new InsurancePolicy();
+                return new ServiceResponse()
+                {
+                    Success = true,
+                    Data = insurancePolicy,
+                    ErrorMessage = ""
+                };
+            }
+            else
+            {
+                string errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                return new ServiceResponse
+                {
+                    Success = false,
+                    ErrorMessage = errorDetails,
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
+        }
+    }
+
+    public async Task<ServiceResponse> UpdatePolicy(int id, InsurancePolicyRequest policy)
+    {
+        try
+        {
+            string serializedObject = JsonConvert.SerializeObject(policy);
+            StringContent content = new(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage httpResponse = await _httpClient.PutAsync($"api/Policy/UpdatePolicy/{id}", content);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return new ServiceResponse()
+                {
+                    Success = true,
+                    ErrorMessage = ""
+                };
+            }
+            else
+            {
+                string errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                return new ServiceResponse
+                {
+                    Success = false,
+                    ErrorMessage = errorDetails,
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
         }
     }
 }

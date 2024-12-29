@@ -114,7 +114,7 @@
                                             <td>@policy.PolicyAmount</td>
                                             <td>
                                                 <!-- Edit Icon -->
-                                                <a asp-action="Edit" asp-route-id="@policy.InsurancePolicyId" class="text-primary" title="Edit">
+                                                <a asp-action="Edit" asp-controller="Policy" asp-route-policyNumber="@policy.PolicyNumber" asp-route-partnerId="@Model.PartnerId" class="text-primary" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
 
@@ -127,20 +127,20 @@
                                     }
                                 </tbody>
                             </table>
-                            <button class="btn btn-dark btn-lg">
-                                Add new policy
-                            </button>
                         }
                         else
                         {
                             <p class="text-center text-muted">No policies available for this partner.</p>
                         }
+                        <a class="btn btn-dark btn-lg" asp-action="Create" asp-controller="Policy" asp-route-externalCode="@Model.ExternalCode" asp-route-partnerId="@Model.PartnerId"  title="Create">
+                            Add new policy
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-footer text-center">
-            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+            <a asp-controller="Partner" asp-action="Index" class="btn btn-secondary">Back</a>
         </div>
     </div>
 </div>

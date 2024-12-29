@@ -1,0 +1,98 @@
+﻿@model Frontend.Models.InsurancePolicy
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="container">
+    <h4 class="text-center">Insurance Policy: @Model.PolicyNumber</h4>
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="InsurancePolicyId" class="control-label"></label>
+                    <input asp-for="InsurancePolicyId" class="form-control insurance-policy-id" readonly />
+                    <span asp-validation-for="InsurancePolicyId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PolicyNumber" class="control-label"></label>
+                    <input asp-for="PolicyNumber" class="form-control" />
+                    <span asp-validation-for="PolicyNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PolicyAmount" class="control-label"></label>
+                    <input asp-for="PolicyAmount" class="form-control" />
+                    <span asp-validation-for="PolicyAmount" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" asp-route-id="@Model.InsurancePolicyId" value="Save" asp-action="Edit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Center the entire page */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    /* Style the InsurancePolicyId field with a distinct color */
+    .insurance-policy-id {
+        background-color: #f0f0f0; /* Light grey background */
+        color: #333; /* Dark text color */
+        border: 1px solid #ccc; /* Light border */
+        font-weight: bold;
+    }
+
+    /* Enhance form input and button styling */
+    .form-group input.form-control {
+        margin-bottom: 15px;
+    }
+
+    /* Add some spacing and emphasis on the Save button */
+    .form-group input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        /* Hover effect for the submit button */
+        .form-group input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    /* Styling for validation errors */
+    .text-danger {
+        font-size: 12px;
+    }
+</style>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

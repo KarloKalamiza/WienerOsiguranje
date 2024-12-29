@@ -1,0 +1,36 @@
+﻿@model Frontend.Request.InsurancePolicyRequest
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="text-center">
+        <h1>Create Insurance Policy</h1>
+        <hr />
+        <div class="col-md-4 mx-auto">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="PolicyNumber" class="control-label"></label>
+                    <input asp-for="PolicyNumber" class="form-control" />
+                    <span asp-validation-for="PolicyNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PolicyAmount" class="control-label"></label>
+                    <input asp-for="PolicyAmount" class="form-control" />
+                    <span asp-validation-for="PolicyAmount" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
