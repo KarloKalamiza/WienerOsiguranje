@@ -96,7 +96,7 @@
                     <div class="card-body">
                         @if (Model.Policies != null && Model.Policies.Any())
                         {
-                            <table class="table table-striped">
+                            <table id="policyTable" class="table table-striped">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Policy ID</th>
@@ -105,7 +105,7 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="policyTableBody">
                                     @foreach (var policy in Model.Policies)
                                     {
                                         <tr>
@@ -119,7 +119,7 @@
                                                 </a>
 
                                                 <!-- Delete Icon -->
-                                                <a asp-action="Delete" asp-route-id="@policy.InsurancePolicyId" class="text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this product?');">
+                                                <a href="javascript:void(0);" class="text-danger" title="Delete" onclick="deletePolicy('@policy.InsurancePolicyId');">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </td>
@@ -144,3 +144,30 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function deletePolicy(policyId) {
+            if (confirm("Are you sure you want to delete this policy?")) {
+                $.ajax({
+                    url: '/api/Policy/DeletePolicy/' + policyId,  // Use the id, not policyNumber
+                    type: 'DELETE',  // Ensure DELETE method is used
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);  // Show success message
+                            // Optionally, remove the deleted item from the UI
+                            $("tr[data-policy-id='" + policyId + "']").remove();  // Ensure the correct row is removed
+                            location.reload();
+                        } 
+                        else {
+                            alert(response.message);  // Show error message if deletion failed
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while deleting the policy.");
+                    }
+                });
+            }
+        }
+    </script>
+}

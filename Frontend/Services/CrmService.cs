@@ -268,4 +268,32 @@ public class CrmService
             return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
         }
     }
+
+    public async Task<ServiceResponse> DeletePolicy(int id)
+    {
+        try
+        {
+            HttpResponseMessage httpResponse = await _httpClient.DeleteAsync($"api/Policy/DeletePolicy/{id}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return new ServiceResponse
+                {
+                    Success = true,
+                };
+            }
+            else
+            {
+                var errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                return new ServiceResponse
+                {
+                    Success = false,
+                    ErrorMessage = errorDetails
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
+        }
+    }
 }

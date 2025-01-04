@@ -131,23 +131,41 @@ namespace Frontend.Controllers
         }
 
         // GET: PolicyController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public async Task<ActionResult> Delete(string policyNumber)
+        //{
+        //    ServiceResponse serviceResponse = await _crmService.FindPolicyByPolicyNumber(policyNumber);
+        //    if (serviceResponse != null && serviceResponse.Success)
+        //    {
+        //        InsurancePolicy? insurancePolicy = serviceResponse.Data as InsurancePolicy;
+        //        return View(insurancePolicy);
+        //    }
+        //    else
+        //    {
+        //        TempData["ErrorMessage"] = "Error occurred while deleting a policy.";
+        //        return View();
+        //    }
+        //}
 
         // POST: PolicyController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpDelete("api/Policy/DeletePolicy/{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                ServiceResponse serviceResponse = await _crmService.DeletePolicy(id);
+                
+                if (serviceResponse.Success)
+                {
+                    return Json(new { success = true, message = "Policy deleted successfully." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Policy could not be deleted." });
+                }
             }
             catch
             {
-                return View();
+                return Json(new { success = false, message = "An error occurred while deleting the policy." });
             }
         }
     }
