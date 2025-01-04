@@ -19,6 +19,8 @@ public static class ErrorHandler
             errorDetails = "Policy number should be unique field. Policy with this policy number already exists and please enter new value.";
         }
 
+        errorDetails = "Something went wrong please check again input fields. Keep in mind some fields must be unique or in proper format.";
+
         return new ServiceResponse 
         { 
             Success = false,

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Frontend.Request;
+namespace Frontend.DTO;
 
-public class InsurancePolicyRequest
+public class EditInsurancePolicyDTO
 {
+    public int InsurancePolicyId { get; set; }
+
     [Required(ErrorMessage = "Please enter policy number")]
     [RegularExpression(@"^\d+$", ErrorMessage = "Policy number must be numeric")]
     [StringLength(15, MinimumLength = 10, ErrorMessage = "Policy number must be between 10 and 15 characters")]

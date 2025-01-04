@@ -18,13 +18,6 @@ public class PartnerController : Controller
         _crmService = crmService;
     }
 
-    // GET: PartnerController
-    //public async Task<ActionResult> Index()
-    //{
-    //    List<DTO.PartnerDTO> partnerDTOs = await _crmService.GetPartners();
-    //    return View(partnerDTOs);
-    //}
-
     public async Task<ActionResult> Index(int? newId = null)
     {
         List<DTO.PartnerDTO> partnerDTOs = await _crmService.GetPartners();
@@ -151,27 +144,6 @@ public class PartnerController : Controller
         {
             TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
             return View(partner); 
-        }
-    }
-
-    // GET: PartnerController/Delete/5
-    public ActionResult Delete(int id)
-    {
-        return View();
-    }
-
-    // POST: PartnerController/Delete/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Delete(int id, IFormCollection collection)
-    {
-        try
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        catch
-        {
-            return View();
         }
     }
 }

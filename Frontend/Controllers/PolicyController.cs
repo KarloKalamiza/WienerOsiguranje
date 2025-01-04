@@ -1,4 +1,6 @@
-﻿using Frontend.Models;
+﻿using Frontend.DTO;
+using Frontend.Mappers;
+using Frontend.Models;
 using Frontend.Request;
 using Frontend.Responses;
 using Frontend.Services;
@@ -83,7 +85,7 @@ namespace Frontend.Controllers
                 if (serviceResponse == null || !serviceResponse.Success || serviceResponse.Data == null)
                 {
                     TempData["ErrorMessage"] = "Policy not found or an error occurred while retrieving the policy.";
-                    return RedirectToAction("Index", "Partner"); 
+                    return View(); 
                 }
 
                 InsurancePolicy? fetchedInsurancePolicy = serviceResponse.Data as InsurancePolicy;
@@ -91,24 +93,31 @@ namespace Frontend.Controllers
                 if (fetchedInsurancePolicy == null)
                 {
                     TempData["ErrorMessage"] = "Invalid policy data retrieved.";
-                    return RedirectToAction("Index", "Partner"); 
+                    return View();
                 }
 
-                return View(fetchedInsurancePolicy);
+                EditInsurancePolicyDTO editInsurancePolicyDTO = InsurancePolicyMapper.MapToEditInsurancePolicyDTO(fetchedInsurancePolicy);
+
+                return View(editInsurancePolicyDTO);
             }
             catch
             {
                 TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
 
-                return RedirectToAction("Index", "Partner");
+                return View();
             }
         }
 
         // POST: PolicyController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, InsurancePolicyRequest request)
+        public async Task<ActionResult> Edit(int id, EditInsurancePolicyDTO request)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "There are validation errors. Please check your input.";
+                return View(request);
+            }
             try
             {
                 ServiceResponse serviceResponse = await _crmService.UpdatePolicy(id, request);
@@ -119,32 +128,16 @@ namespace Frontend.Controllers
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Update was not successfull. Please try again..";
-                    return RedirectToAction("Index", "Partner");
+                    TempData["ErrorMessage"] = serviceResponse.ErrorMessage;
+                    return View(request);
                 }
             }
             catch
             {
                 TempData["ErrorMessage"] = "Error occurred while updating a policy.";
-                return RedirectToAction("Index", "Partner");
+                return View(request);
             }
         }
-
-        // GET: PolicyController/Delete/5
-        //public async Task<ActionResult> Delete(string policyNumber)
-        //{
-        //    ServiceResponse serviceResponse = await _crmService.FindPolicyByPolicyNumber(policyNumber);
-        //    if (serviceResponse != null && serviceResponse.Success)
-        //    {
-        //        InsurancePolicy? insurancePolicy = serviceResponse.Data as InsurancePolicy;
-        //        return View(insurancePolicy);
-        //    }
-        //    else
-        //    {
-        //        TempData["ErrorMessage"] = "Error occurred while deleting a policy.";
-        //        return View();
-        //    }
-        //}
 
         // POST: PolicyController/Delete/5
         [HttpDelete("api/Policy/DeletePolicy/{id}")]

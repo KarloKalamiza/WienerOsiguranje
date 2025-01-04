@@ -1,14 +1,7 @@
-﻿@model Frontend.Models.InsurancePolicy
+﻿@model Frontend.DTO.EditInsurancePolicyDTO
 
 @{
     ViewData["Title"] = "Edit";
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
 }
 
 <div class="container">
@@ -17,6 +10,12 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form asp-action="Edit">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
@@ -94,5 +93,8 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive"></script>
 }

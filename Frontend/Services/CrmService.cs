@@ -4,6 +4,7 @@ using Frontend.Mappers;
 using Frontend.Models;
 using Frontend.Request;
 using Frontend.Responses;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -163,11 +164,8 @@ public class CrmService
             else
             {
                 string errorDetails = await httpResponse.Content.ReadAsStringAsync();
-                return new ServiceResponse
-                {
-                    Success = false,
-                    ErrorMessage = errorDetails,
-                };
+                ServiceResponse formatedServiceResponse = ErrorHandler.HandleUniqueError(errorDetails);
+                return formatedServiceResponse;
             }
         }
         catch (Exception ex)
@@ -194,11 +192,8 @@ public class CrmService
             else
             {
                 string errorDetails = await httpResponse.Content.ReadAsStringAsync();
-                return new ServiceResponse
-                {
-                    Success = false,
-                    ErrorMessage = errorDetails,
-                };
+                ServiceResponse formatedServiceResponse = ErrorHandler.HandleUniqueError(errorDetails);
+                return formatedServiceResponse;
             }
         }
         catch (Exception ex)
@@ -207,7 +202,7 @@ public class CrmService
         }
     }
 
-    public async Task<ServiceResponse> UpdatePolicy(int id, InsurancePolicyRequest policy)
+    public async Task<ServiceResponse> UpdatePolicy(int id, EditInsurancePolicyDTO policy)
     {
         try
         {
@@ -226,11 +221,8 @@ public class CrmService
             else
             {
                 string errorDetails = await httpResponse.Content.ReadAsStringAsync();
-                return new ServiceResponse
-                {
-                    Success = false,
-                    ErrorMessage = errorDetails,
-                };
+                ServiceResponse formatedServiceResponse = ErrorHandler.HandleUniqueError(errorDetails);
+                return formatedServiceResponse;
             }
         }
         catch (Exception ex)
@@ -284,11 +276,8 @@ public class CrmService
             else
             {
                 var errorDetails = await httpResponse.Content.ReadAsStringAsync();
-                return new ServiceResponse
-                {
-                    Success = false,
-                    ErrorMessage = errorDetails
-                };
+                ServiceResponse formatedServiceResponse = ErrorHandler.HandleUniqueError(errorDetails);
+                return formatedServiceResponse;
             }
         }
         catch (Exception ex)
