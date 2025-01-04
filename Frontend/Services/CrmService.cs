@@ -176,6 +176,37 @@ public class CrmService
         }
     }
 
+    public async Task<ServiceResponse> FindPartnerByID(int id)
+    {
+        try
+        {
+            HttpResponseMessage httpResponse = await _httpClient.GetAsync($"api/Partner/PartnersWithPoliciesByID/{id}");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                string data = httpResponse.Content.ReadAsStringAsync().Result;
+                Partner? partner = JsonConvert.DeserializeObject<Partner>(data);
+                return new ServiceResponse
+                {
+                    Data = partner,
+                    Success = true,
+                };
+            }
+            else
+            {
+                string errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                return new ServiceResponse
+                {
+                    Success = false,
+                    ErrorMessage = errorDetails,
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
+        }
+    }
+
     public async Task<ServiceResponse> UpdatePolicy(int id, InsurancePolicyRequest policy)
     {
         try
@@ -200,6 +231,36 @@ public class CrmService
                     Success = false,
                     ErrorMessage = errorDetails,
                 };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse() { Success = false, ErrorMessage = ex.Message, };
+        }
+    }
+
+    public async Task<ServiceResponse> UpdatePartner(int id, EditPartnerDTO partner)
+    {
+        try
+        {
+            PartnerRequest? request = PartnerMapper.MapToRequest(partner);
+            string serializedObject = JsonConvert.SerializeObject(request);
+            StringContent content = new(serializedObject, Encoding.UTF8, "application/json");
+            HttpResponseMessage httpResponse = await _httpClient.PutAsync($"api/Partner/UpdatePartner/{id}", content);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return new ServiceResponse()
+                {
+                    Success = true,
+                    ErrorMessage = ""
+                };
+            }
+            else
+            {
+                string errorDetails = await httpResponse.Content.ReadAsStringAsync();
+                ServiceResponse formatedResponse = ErrorHandler.HandleUniqueError(errorDetails);
+
+                return formatedResponse;
             }
         }
         catch (Exception ex)

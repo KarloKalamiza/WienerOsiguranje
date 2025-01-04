@@ -1,0 +1,129 @@
+﻿@model Frontend.DTO.EditPartnerDTO
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1 class="text-center">Edit</h1>
+<hr />
+<div class="d-flex justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <!-- PartnerId Field -->
+            <div class="form-group">
+                <label asp-for="PartnerId" class="control-label"></label>
+                <input asp-for="PartnerId" class="form-control" readonly />
+                <span asp-validation-for="PartnerId" class="text-danger"></span>
+            </div>
+
+            <!-- FirstName Field -->
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <!-- LastName Field -->
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <!-- Address Field -->
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <!-- PartnerNumber Field -->
+            <div class="form-group">
+                <label asp-for="PartnerNumber" class="control-label"></label>
+                <input asp-for="PartnerNumber" class="form-control" />
+                <span asp-validation-for="PartnerNumber" class="text-danger"></span>
+            </div>
+
+            <!-- CroatianPIN Field -->
+            <div class="form-group">
+                <label asp-for="CroatianPIN" class="control-label"></label>
+                <input asp-for="CroatianPIN" class="form-control" />
+                <span asp-validation-for="CroatianPIN" class="text-danger"></span>
+            </div>
+
+            <!-- PartnerTypeId Field -->
+            <div class="mb-3">
+                <label asp-for="PartnerTypeId" class="form-label">Partner type:</label>
+                <select asp-for="PartnerTypeId" class="form-select">
+                    <option value="" disabled>Select partner type</option>
+                    <option value="1">Personal</option>
+                    <option value="2">Legal</option>
+                </select>
+                <span asp-validation-for="PartnerTypeId" class="text-danger"></span>
+            </div>
+
+            <!-- CreatedAtUtc Field -->
+            <div class="form-group">
+                <label asp-for="CreatedAtUtc" class="control-label"></label>
+                <input asp-for="CreatedAtUtc" class="form-control" readonly />
+                <span asp-validation-for="CreatedAtUtc" class="text-danger"></span>
+            </div>
+
+            <!-- CreatedByUser Field -->
+            <div class="form-group">
+                <label asp-for="CreatedByUser" class="control-label"></label>
+                <input asp-for="CreatedByUser" class="form-control" />
+                <span asp-validation-for="CreatedByUser" class="text-danger"></span>
+            </div>
+
+            <!-- IsForeign Checkbox -->
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsForeign" />
+                    @Html.DisplayNameFor(model => model.IsForeign)
+                </label>
+            </div>
+
+            <!-- ExternalCode Field -->
+            <div class="form-group">
+                <label asp-for="ExternalCode" class="control-label"></label>
+                <input asp-for="ExternalCode" class="form-control" />
+                <span asp-validation-for="ExternalCode" class="text-danger"></span>
+            </div>
+
+            <!-- Gender Field -->
+            <div class="mb-3">
+                <label asp-for="Gender" class="form-label">Gender:</label>
+                <select asp-for="Gender" class="form-select">
+                    <option value="" disabled>Select Gender</option>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                    <option value="2">Other</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group text-center">
+                <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive"></script>
+}

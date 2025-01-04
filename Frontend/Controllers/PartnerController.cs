@@ -1,4 +1,5 @@
 ﻿using Frontend.DTO;
+using Frontend.Mappers;
 using Frontend.Models;
 using Frontend.Request;
 using Frontend.Responses;
@@ -93,23 +94,63 @@ public class PartnerController : Controller
     }
 
     // GET: PartnerController/Edit/5
-    public ActionResult Edit(int id)
+    public async Task<ActionResult> Edit(int id)
     {
-        return View();
+        try
+        {
+            ServiceResponse serviceResponse = await _crmService.FindPartnerByID(id);
+            if (serviceResponse != null && serviceResponse.Success)
+            {
+                Partner? partner = serviceResponse.Data as Partner ?? new Partner();
+                EditPartnerDTO editPartnerDTO = PartnerMapper.MapToEditPartnerDTO(partner);
+                return View(editPartnerDTO);
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to fetch partner details.";
+
+                return View();
+            }
+        }
+        catch
+        {
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+
+            return RedirectToAction("Index", "Partner");
+        }
     }
 
     // POST: PartnerController/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
+    public async Task<ActionResult> Edit(int id, EditPartnerDTO partner)
     {
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "Validation failed. Please correct the errors and try again.";
+            return View(partner); 
+        }
+
         try
         {
-            return RedirectToAction(nameof(Index));
+            ServiceResponse serviceResponse = await _crmService.UpdatePartner(id, partner);
+            if (serviceResponse != null && serviceResponse.Success)
+            {
+                TempData["SuccessMessage"] = "Partner updated successfully.";
+
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var errorMessage = serviceResponse?.ErrorMessage ?? "Unknown error occurred.";
+                TempData["ErrorMessage"] = $"Update failed: {errorMessage}";
+                return View(partner); 
+            }
         }
-        catch
+        catch 
         {
-            return View();
+            TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            return View(partner); 
         }
     }
 
