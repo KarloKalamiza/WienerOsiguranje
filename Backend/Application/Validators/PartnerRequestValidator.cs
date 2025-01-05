@@ -16,7 +16,7 @@ public class PartnerRequestValidator : AbstractValidator<PartnerRequest>
             .MinimumLength(2).WithMessage("Partner's last name minimum length is 2 characters.")
             .MaximumLength(255).WithMessage("Partner's last name maximum length is 255 characters.");
         RuleFor(p => p.Address)
-            .Matches("^[a-zA-Z0-9 ]*$").WithMessage("Address must be alphanumeric.")
+            .Matches(@"^[a-zA-Z0-9 čćđšžČĆĐŠŽ]*$").WithMessage("Address must be alphanumeric.")
             .When(x => !string.IsNullOrEmpty(x.Address));
         RuleFor(p => p.PartnerNumber)
             .NotEmpty().WithMessage("Partner number is required")
