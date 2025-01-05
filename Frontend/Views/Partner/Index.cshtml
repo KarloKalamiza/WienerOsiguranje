@@ -30,13 +30,13 @@
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
-            <th>Actions</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model) 
         {
-            <tr>
+            <tr data-id="@item.PartnerId">
                 <td>
                     @Html.DisplayFor(modelItem => item.SpecialPartnerSign)
                 </td>
@@ -82,15 +82,14 @@
 </table>
 
 @section Scripts {
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>    
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script>
         var table = $('#myTable').DataTable({
             paging: true,
             searching: true,
-            ordering: true,
+            ordering: false,
             info: false,
             lengthMenu: [10, 25, 50],
-            order: [[4, "desc"]],
             language: {
                 emptyTable: "No data available in table",
                 search: "Filter records:",
@@ -107,7 +106,6 @@
             },
             stateSave: true,  // Save the state of the table (pagination, search, etc.)
         });
-
         // Highlight the row based on newId passed from the controller
         var newId = '@ViewBag.NewId';
         if (newId) {
@@ -116,22 +114,18 @@
             if (row.length) {
                 // Highlight the row
                 row.addClass('highlight');
-
                 // Optionally scroll to the row
                 $('html, body').animate({
                     scrollTop: row.offset().top
                 }, 1000);
             }
         }
-
         // Highlight the active page button
         table.on('draw', function () {
             var pageInfo = table.page.info();  // Get current page info
             var currentPage = pageInfo.page + 1;  // Get the 1-based page index (DataTable uses 0-based indexing)
-
             // Remove the 'active' class from all pagination buttons
             $('#myTable_paginate .paginate_button').removeClass('active');
-
             // Add the 'active' class to the current page button
             $('#myTable_paginate .paginate_button').each(function () {
                 var pageNumber = $(this).text();
@@ -139,13 +133,11 @@
                     $(this).addClass('active');  // Highlight the current page button
                 }
             });
-
             // If the table is drawn and it's on the first page, highlight the first page button
             if (currentPage === 1) {
                 $('#myTable_paginate .paginate_button:first').addClass('active');
             }
         });
-
         // Trigger the draw event once to ensure the correct active button is set on load
         table.draw();
     </script>

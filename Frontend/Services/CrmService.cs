@@ -20,7 +20,7 @@ public class CrmService
         _httpClient.BaseAddress = _baseUri;
     }
 
-    public async Task<List<PartnerDTO>> GetPartners()
+    public async Task<ServiceResponse> GetPartners()
     {
         try
         {
@@ -28,7 +28,7 @@ public class CrmService
             HttpResponseMessage response = await _httpClient.GetAsync("api/Partner/PartnersWithPolicies");
             if (response.IsSuccessStatusCode)
             {
-                string data = response.Content.ReadAsStringAsync().Result;
+                string data = await response.Content.ReadAsStringAsync();
                 List<Partner> partners = JsonConvert.DeserializeObject<List<Partner>>(data) ?? throw new Exception();
                 foreach (var partner in partners)
                 {
@@ -36,16 +36,24 @@ public class CrmService
                     partnerDTOs.Add(partnerDTO);
                 }
                 partnerDTOs.Sort((x, y) => y.CreatedAtUtc.CompareTo(x.CreatedAtUtc));
-                return partnerDTOs;
+                return new ServiceResponse 
+                {
+                    Success = true,
+                    Data = partnerDTOs
+                };
             }
             else
             {
-                return [];
+                return new ServiceResponse 
+                {
+                    Success = false, 
+                    Data = new List<PartnerDTO>()
+                };
             }
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            return new ServiceResponse { Success = false, ErrorMessage = "Unexpected error occurred. Please try again." };
         }
     }
 

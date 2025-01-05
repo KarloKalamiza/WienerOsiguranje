@@ -20,8 +20,9 @@ public class PartnerController : Controller
 
     public async Task<ActionResult> Index(int? newId = null)
     {
-        List<DTO.PartnerDTO> partnerDTOs = await _crmService.GetPartners();
-        PartnerDTO? partnerDTO = partnerDTOs.FirstOrDefault();
+        ServiceResponse serviceResponse = await _crmService.GetPartners();
+
+        List<PartnerDTO>? partnerDTOs = serviceResponse.Data as List<PartnerDTO>;
         ViewBag.NewId = newId;
         return View(partnerDTOs);
     }
